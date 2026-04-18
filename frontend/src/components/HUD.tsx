@@ -37,7 +37,7 @@ export const HUD: React.FC = () => {
                 </div>
                 <div className="flex flex-col text-right">
                   <span>Hand</span>
-                  <span className="text-white text-xs">{p.hand.length}</span>
+                  <span className="text-white text-xs">{p.hand_count ?? p.hand?.length ?? 0}</span>
                 </div>
               </div>
             </div>

@@ -68,6 +68,8 @@ export interface Player {
   hand: TrainCard[];
   goals: GoalCard[];
   pending_goals: GoalCard[];
+  hand_count?: number; // For opponents
+  goal_count?: number; // For opponents
 }
 
 export interface GameState {

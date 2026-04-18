@@ -37,7 +37,7 @@ def create_game():
     return {"game_id": game_id}
 
 @app.post("/games/{game_id}/join")
-def join_game(game_id: str, request: JoinGameRequest):
+async def join_game(game_id: str, request: JoinGameRequest):
     state = repository.get_game(game_id)
     if not state:
         raise HTTPException(status_code=404, detail="Game not found")
@@ -45,6 +45,7 @@ def join_game(game_id: str, request: JoinGameRequest):
     try:
         token = add_player_to_lobby(state, request.player_id)
         repository.save_game(state)
+        await manager.broadcast_state(game_id)
         return {"status": "joined", "player_id": request.player_id, "secret_token": token}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

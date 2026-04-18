@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useGame } from "../context/GameContext";
 
 export const GameLobby: React.FC = () => {
-  const { setGameId, setPlayerId, setToken, gameState, gameId, playerId } = useGame();
+  const { setGameId, setPlayerId, setToken, gameState, gameId, playerId, storedGameId } = useGame();
   
   // Local state for UI flow
   const [inputName, setInputName] = useState("");
@@ -15,8 +15,6 @@ export const GameLobby: React.FC = () => {
       const res = await fetch("http://localhost:8000/games", { method: "POST" });
       const data = await res.json();
       setGameId(data.game_id);
-      // Update URL without refreshing so they can copy-paste it
-      window.history.pushState({}, '', `?game=${data.game_id}`);
     } catch (err) {
       console.error("Failed to create game", err);
     } finally {
@@ -57,16 +55,27 @@ export const GameLobby: React.FC = () => {
       <div className="max-w-sm w-full bg-slate-900 rounded-[2.5rem] p-10 shadow-2xl border border-slate-800 flex flex-col gap-8 text-center">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tighter">TRAIN GAME</h1>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-2">Multiplayer Session</p>
+          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-2">Ready to play?</p>
         </div>
 
-        <button
-          onClick={handleCreateGame}
-          disabled={isCreating}
-          className="w-full py-5 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all active:scale-95 uppercase tracking-widest text-sm"
-        >
-          {isCreating ? "Creating..." : "Create Private Room"}
-        </button>
+        <div className="flex flex-col gap-4">
+          <button
+            onClick={handleCreateGame}
+            disabled={isCreating}
+            className="w-full py-5 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-500/20 hover:bg-indigo-500 transition-all active:scale-95 uppercase tracking-widest text-sm"
+          >
+            {isCreating ? "Creating..." : "Create Private Room"}
+          </button>
+
+          {storedGameId && (
+            <button
+              onClick={() => setGameId(storedGameId)}
+              className="w-full py-4 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 font-bold rounded-2xl hover:bg-emerald-600/30 transition-all active:scale-95 uppercase tracking-widest text-[10px]"
+            >
+              Resume Last Session ({storedGameId})
+            </button>
+          )}
+        </div>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-800"></div></div>
@@ -159,7 +168,15 @@ export const GameLobby: React.FC = () => {
       )}
       
       <button 
-        onClick={() => { setGameId(""); window.history.pushState({}, '', window.location.pathname); }}
+        onClick={() => { 
+          setGameId(""); 
+          setPlayerId(""); 
+          setToken("");
+          localStorage.removeItem("train_game_id");
+          localStorage.removeItem("train_player_id");
+          localStorage.removeItem("train_token");
+          window.history.pushState({}, '', window.location.pathname); 
+        }}
         className="text-[9px] font-black text-slate-600 hover:text-slate-400 uppercase tracking-widest transition-colors"
       >
         Leave Room

@@ -17,6 +17,7 @@ interface GameContextType {
   token: string | null;
   setToken: (token: string) => void;
   isDemoMode: boolean;
+  storedGameId: string | null;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -26,12 +27,14 @@ const useWebSocketHook: any = (useWebSocket as any).default || useWebSocket;
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDemoMode] = useState(() => new URLSearchParams(window.location.search).get("demo") === "true");
   
-  // INITIAL STATE PRIORITY: 1. URL Parameter (?game=) 2. LocalStorage 3. Null
+  // 1. Look for a stored session in case they want to rejoin
+  const [storedGameId] = useState(() => localStorage.getItem("train_game_id"));
+
+  // 2. ONLY auto-load into the state if in URL or Demo Mode
   const [gameId, setGameId] = useState<string | null>(() => {
     if (isDemoMode) return "demo-123";
     const urlParams = new URLSearchParams(window.location.search);
-    const fromUrl = urlParams.get("game");
-    return fromUrl || localStorage.getItem("train_game_id");
+    return urlParams.get("game");
   });
 
   const [gameState, setGameState] = useState<GameState | null>(isDemoMode ? mockGameState : null);
@@ -62,7 +65,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!isDemoMode) {
       if (playerId) localStorage.setItem("train_player_id", playerId);
-      if (gameId) localStorage.setItem("train_game_id", gameId);
+      if (gameId) {
+         localStorage.setItem("train_game_id", gameId);
+         // Update URL to match current game
+         if (!window.location.search.includes(`game=${gameId}`)) {
+            window.history.pushState({}, '', `?game=${gameId}`);
+         }
+      }
       if (token) localStorage.setItem("train_token", token);
     }
   }, [playerId, gameId, token, isDemoMode]);
@@ -92,6 +101,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         setToken,
         isDemoMode,
+        storedGameId,
       }}
     >
       {children}

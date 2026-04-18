@@ -23,7 +23,9 @@ export const GoalSection: React.FC = () => {
             }`}
           >
             <div className="flex justify-between items-center">
-              <span className="text-[10px] font-bold uppercase truncate">{goal.node_a} - {goal.node_b}</span>
+              <span className="text-[10px] font-bold uppercase truncate">
+                {gameState.cities[goal.node_a]?.name || goal.node_a} - {gameState.cities[goal.node_b]?.name || goal.node_b}
+              </span>
               <span className="text-[10px] font-black ml-2">{goal.points}</span>
             </div>
           </div>

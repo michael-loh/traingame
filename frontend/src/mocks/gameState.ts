@@ -43,8 +43,8 @@ export const mockGameState: GameState = {
         { id: "h6", color: TrainColor.GREEN },
       ],
       goals: [
-        { id: "g1", node_a: "New York", node_b: "Washington DC", points: 8, is_completed: true },
-        { id: "g2", node_a: "Boston", node_b: "Pittsburgh", points: 12, is_completed: false },
+        { id: "g1", node_a: "nyc", node_b: "dc", points: 8, is_completed: true },
+        { id: "g2", node_a: "bos", node_b: "pit", points: 12, is_completed: false },
       ],
       pending_goals: [],
     },

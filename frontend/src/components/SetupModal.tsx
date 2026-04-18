@@ -46,7 +46,7 @@ export const SetupModal: React.FC = () => {
             >
               <div className="flex justify-between items-center">
                 <span className="text-xs font-black uppercase tracking-tighter text-slate-900">
-                  {goal.node_a} - {goal.node_b}
+                  {gameState.cities[goal.node_a]?.name || goal.node_a} - {gameState.cities[goal.node_b]?.name || goal.node_b}
                 </span>
                 <span className="text-[10px] font-black bg-white px-2 py-1 rounded-lg shadow-sm">
                   {goal.points}

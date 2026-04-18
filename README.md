@@ -77,5 +77,5 @@ npm run build
 ```
 
 ## 🛠️ Documentation
-*   [AGENTS.md](AGENTS.md): Essential guidelines and setup for AI/human contributors.
+*   [AGENTS.md](backend/AGENTS.md): Essential guidelines and setup for AI/human contributors.
 *   [Game Plan](train_game_plan.md): Architectural and logic overview.

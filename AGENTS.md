@@ -1,33 +1,19 @@
-# Agent Guidelines - The Train Game
+# Agent Guidelines - The Train Game (Global)
 
-## 1. Project Structure
-The project is structured as a monorepo with sibling directories:
-*   `backend/`: FastAPI application, engine logic, and tests.
-*   `frontend/`: React + Vite application.
+## 1. Project Overview
+The Train Game is a real-time, high-performance "Ticket to Ride" clone. It is built as a monorepo containing a Python backend and a TypeScript frontend.
 
-## 2. Development Environment
-*   **Virtual Environments:** Always use a Python virtual environment (`venv`) inside the `backend/` directory.
-    *   **Setup:** `cd backend && python -m venv venv`
-    *   **Activation (Windows):** `.\venv\Scripts\activate`
-*   **Node Version:** Use a modern Node.js version inside the `frontend/` directory.
+## 2. Tech Stack
+*   **Backend:** Python 3.x, FastAPI, WebSockets, Pydantic, Pytest.
+*   **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, `react-use-websocket`.
+*   **Communication:** JSON over WebSockets for real-time state synchronization.
 
-## 3. Architectural Mandates
-*   **Separation of Concerns:** The backend is a pure mathematical engine. Do not introduce logic related to UI layout or rendering.
-*   **Statelessness:** The FastAPI application remains stateless; all game state must be persisted in the `repository`.
-*   **Immutability:** Treat GameState as immutable. Use Pydantic's `model_copy(update=...)` for updates.
+## 3. Directory Structure
+*   `backend/`: Contains the game engine, API endpoints, and persistence logic. (See `backend/AGENTS.md`)
+*   `frontend/`: Contains the React UI and client-side game state management. (See `frontend/AGENTS.md`)
+*   `train_game_plan.md`: The central source of truth for game rules and architecture.
 
-## 4. UI Development (Demo Mode)
-*   **Isolated Testing:** When working on UI/UX, prefer using **Demo Mode** (`http://localhost:5173/?demo=true`). This uses `frontend/src/mocks/gameState.ts` to provide a full game state without requiring a backend.
-*   **State Alignment:** Ensure any new UI features are mapped to the standard `GameState` interface in `frontend/src/types/game.ts`.
-
-## 5. Coding Standards
-*   **Type Safety:** All functions must have complete type hints. Use `Pydantic` for data validation and `Enum`s for categories (Colors, Statuses).
-*   **Error Handling:** Rule violations should be caught and transformed into clear WebSocket error messages via `manager.send_error`.
-
-## 6. Testing Principles
-*   **Mandatory Verification:** ALWAYS run the full test suite (`python -m pytest`) inside the `backend/` directory after any backend change.
-*   **Logic First:** Every new game mechanic must be accompanied by a unit test that verifies the `GameState` transition.
-
-## 7. Communication
-*   **Atomic Updates:** Keep changes surgical and focused on the specific task.
-*   **Documentation:** Update `train_game_plan.md` if an architectural change is made.
+## 4. Cross-Cutting Principles
+*   **Source of Truth:** The Backend is the ultimate authority on game state. The Frontend is a reactive view of that state.
+*   **Consistency:** Keep the `GameState` TypeScript interfaces in `frontend/src/types/game.ts` perfectly synced with the Pydantic models in `backend/app/models/game.py`.
+*   **Atomic PRs:** When adding a feature that requires both backend and frontend changes, implement the backend logic and state updates first.

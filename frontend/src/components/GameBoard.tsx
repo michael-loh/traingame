@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useGame } from "../context/GameContext";
 import { City, Route, RouteColor } from "../types/game";
 import { EventType } from "../types/events";
@@ -16,11 +16,22 @@ const COLOR_MAP: Record<RouteColor, string> = {
 };
 
 export const GameBoard: React.FC = () => {
-  const { gameState, sendEvent, playerId } = useGame();
+  const { gameState, sendEvent, playerId, hoveredGoal } = useGame();
 
   if (!gameState) return null;
 
   const { cities, board } = gameState;
+
+  // 1. Identify all cities that are part of the current player's active goals
+  const activeGoalCities = useMemo(() => {
+    if (!playerId || !gameState.players[playerId]) return new Set<string>();
+    const cityIds = new Set<string>();
+    gameState.players[playerId].goals.forEach(goal => {
+      cityIds.add(goal.node_a);
+      cityIds.add(goal.node_b);
+    });
+    return cityIds;
+  }, [gameState, playerId]);
 
   const handleClaimRoute = (routeId: string) => {
     sendEvent(EventType.CLAIM_ROUTE, { route_id: routeId, card_ids: [] });
@@ -46,22 +57,50 @@ export const GameBoard: React.FC = () => {
         ))}
 
         {/* Render Cities */}
-        {Object.values(cities).map((city) => (
-          <g key={city.id} transform={`translate(${city.x}, ${city.y})`}>
-            <circle
-              r="1.5"
-              className="fill-white stroke-slate-900 stroke-[0.4]"
-            />
-            <text
-              y="3.5"
-              textAnchor="middle"
-              className="font-black fill-slate-900 pointer-events-none select-none uppercase tracking-tighter"
-              style={{ fontSize: '2px' }}
-            >
-              {city.name}
-            </text>
-          </g>
-        ))}
+        {Object.values(cities).map((city) => {
+          const isHovered = hoveredGoal?.node_a === city.id || hoveredGoal?.node_b === city.id;
+          const isGoalCity = activeGoalCities.has(city.id);
+          
+          return (
+            <g key={city.id} transform={`translate(${city.x}, ${city.y})`}>
+              {/* Active Hover Highlight Ring */}
+              {isHovered && (
+                <circle
+                  r="3.5"
+                  className="fill-indigo-500/20 stroke-indigo-500 stroke-[0.5] animate-pulse"
+                />
+              )}
+              
+              {/* The City Node */}
+              <circle
+                r={isHovered ? 2 : 1.5}
+                className={`transition-all duration-300 stroke-[0.4] ${
+                  isHovered 
+                    ? "fill-indigo-600 stroke-white scale-110" 
+                    : isGoalCity 
+                      ? "fill-indigo-100 stroke-indigo-600" 
+                      : "fill-white stroke-slate-900"
+                }`}
+              />
+
+              {/* The City Label */}
+              <text
+                y="3.5"
+                textAnchor="middle"
+                className={`font-black uppercase tracking-tighter transition-all duration-300 pointer-events-none select-none ${
+                  isHovered 
+                    ? "fill-indigo-600 scale-125 translate-y-0.5" 
+                    : isGoalCity 
+                      ? "fill-indigo-800" 
+                      : "fill-slate-900"
+                }`}
+                style={{ fontSize: isHovered ? '3px' : '2.5px' }}
+              >
+                {city.name}
+              </text>
+            </g>
+          );
+        })}
       </svg>
     </div>
   );

@@ -18,6 +18,8 @@ interface GameContextType {
   setToken: (token: string) => void;
   isDemoMode: boolean;
   storedGameId: string | null;
+  hoveredGoal: { node_a: string; node_b: string } | null;
+  setHoveredGoal: (goal: { node_a: string; node_b: string } | null) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -27,6 +29,8 @@ const useWebSocketHook: any = (useWebSocket as any).default || useWebSocket;
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDemoMode] = useState(() => new URLSearchParams(window.location.search).get("demo") === "true");
   
+  const [hoveredGoal, setHoveredGoal] = useState<{ node_a: string; node_b: string } | null>(null);
+
   // 1. Look for a stored session in case they want to rejoin
   const [storedGameId] = useState(() => localStorage.getItem("train_game_id"));
 
@@ -102,6 +106,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken,
         isDemoMode,
         storedGameId,
+        hoveredGoal,
+        setHoveredGoal,
       }}
     >
       {children}

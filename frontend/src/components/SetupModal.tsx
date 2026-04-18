@@ -3,7 +3,7 @@ import { useGame } from "../context/GameContext";
 import { EventType } from "../types/events";
 
 export const SetupModal: React.FC = () => {
-  const { gameState, playerId, sendEvent } = useGame();
+  const { gameState, playerId, sendEvent, setHoveredGoal } = useGame();
   const [selectedGoalIds, setSelectedGoalIds] = useState<string[]>([]);
 
   if (!gameState || !playerId) return null;
@@ -22,12 +22,13 @@ export const SetupModal: React.FC = () => {
       alert("Keep at least 2 goals!");
       return;
     }
+    setHoveredGoal(null);
     sendEvent(EventType.CHOOSE_GOALS, { kept_goal_ids: selectedGoalIds });
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-[200] p-6">
-      <div className="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 flex flex-col gap-6 border border-white/20">
+    <div className="fixed inset-0 bg-slate-900/40 flex items-center justify-start z-[200] p-12 pointer-events-none">
+      <div className="bg-white rounded-[2rem] shadow-2xl max-w-sm w-full p-8 flex flex-col gap-6 border border-white/20 pointer-events-auto transition-transform">
         <div className="text-center">
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">Initial Goals</h2>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Select at least 2 cards</p>
@@ -38,10 +39,12 @@ export const SetupModal: React.FC = () => {
             <div
               key={goal.id}
               onClick={() => toggleGoal(goal.id)}
+              onMouseEnter={() => setHoveredGoal({ node_a: goal.node_a, node_b: goal.node_b })}
+              onMouseLeave={() => setHoveredGoal(null)}
               className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                 selectedGoalIds.includes(goal.id)
                   ? "border-indigo-500 bg-indigo-50 shadow-md scale-[1.02]"
-                  : "border-slate-100 hover:border-slate-200 bg-slate-50 opacity-70"
+                  : "border-slate-100 hover:border-slate-200 bg-slate-50 opacity-90"
               }`}
             >
               <div className="flex justify-between items-center">

@@ -1,0 +1,78 @@
+{
+  "cities": [
+    {"id": "0-0", "name": "Northwest", "x": 10, "y": 10}, 
+    {"id": "1-0", "name": "North", "x": 50, "y": 10},     
+    {"id": "2-0", "name": "Northeast", "x": 90, "y": 10},
+    {"id": "0-1", "name": "West", "x": 10, "y": 50},      
+    {"id": "1-1", "name": "Center", "x": 50, "y": 50},    
+    {"id": "2-1", "name": "East", "x": 90, "y": 50},
+    {"id": "0-2", "name": "Southwest", "x": 10, "y": 90}, 
+    {"id": "1-2", "name": "South", "x": 50, "y": 90},     
+    {"id": "2-2", "name": "Southeast", "x": 90, "y": 90}
+  ],
+  "connections": [
+    {
+      "nodes": ["0-0", "1-0"],
+      "length": 2,
+      "routes": [{"id": "r1", "color": "red"}]
+    },
+    {
+      "nodes": ["1-0", "2-0"],
+      "length": 2,
+      "routes": [{"id": "r2", "color": "blue"}]
+    },
+    {
+      "nodes": ["0-1", "1-1"],
+      "length": 2,
+      "routes": [{"id": "r3", "color": "green"}]
+    },
+    {
+      "nodes": ["1-1", "2-1"],
+      "length": 2,
+      "routes": [
+        {"id": "r4_a", "color": "orange"},
+        {"id": "r4_b", "color": "pink"}
+      ]
+    },
+    {
+      "nodes": ["0-2", "1-2"],
+      "length": 2,
+      "routes": [{"id": "r5", "color": "yellow"}]
+    },
+    {
+      "nodes": ["1-2", "2-2"],
+      "length": 2,
+      "routes": [{"id": "r6", "color": "black"}]
+    },
+    {
+      "nodes": ["0-0", "0-1"],
+      "length": 2,
+      "routes": [{"id": "r7", "color": "white"}]
+    },
+    {
+      "nodes": ["0-1", "0-2"],
+      "length": 2,
+      "routes": [{"id": "r8", "color": "any"}]
+    },
+    {
+      "nodes": ["1-0", "1-1"],
+      "length": 2,
+      "routes": [{"id": "r9", "color": "red"}]
+    },
+    {
+      "nodes": ["1-1", "1-2"],
+      "length": 2,
+      "routes": [{"id": "r10", "color": "blue"}]
+    },
+    {
+      "nodes": ["2-0", "2-1"],
+      "length": 2,
+      "routes": [{"id": "r11", "color": "green"}]
+    },
+    {
+      "nodes": ["2-1", "2-2"],
+      "length": 2,
+      "routes": [{"id": "r12", "color": "orange"}]
+    }
+  ]
+}
